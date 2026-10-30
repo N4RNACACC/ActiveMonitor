@@ -20,6 +20,7 @@ if(!File.Exists(targetProcessPath))
 }
 else
 {
+    targetProcess.Start();
    Logger.LogInfo($"Monitoring target process: {targetProcessPath}");
    while (true)
    {
@@ -40,6 +41,6 @@ else
                 break;
             }
         }
-        Thread.Sleep(10000); // Check every 10 seconds
+        targetProcess.WaitForExit(1000); // Wait for 1 second before checking again
    }
 }

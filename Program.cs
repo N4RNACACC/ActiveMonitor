@@ -30,6 +30,7 @@ else
             {
                 targetProcess.Start();
                 Logger.LogInfo("Target process restarted successfully.");
+                Logger.LogInfo($"Monitoring target process PID: {targetProcess.Id}");
             }
             catch (Exception ex)
             {
@@ -39,5 +40,6 @@ else
                 break;
             }
         }
+        Thread.Sleep(10000); // Check every 10 seconds
    }
 }

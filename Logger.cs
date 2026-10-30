@@ -5,7 +5,7 @@ public class Logger
     private enum LogLevel
     {
         Info,
-        Warning,
+        Warn,
         Error
     }
     private static readonly string LogDirPath = Path.Combine(AppInfo.AppPath, "logs");
@@ -74,7 +74,8 @@ public class Logger
     public static void LogInfo(string message)
     {
         if (_lock) return;
-        var content = $"[{LogLevel.Info}][{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: {message}";
+        var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Info}]: {message}";
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine(content);
         WriteToFile(content);
     }
@@ -83,7 +84,8 @@ public class Logger
     public static void LogWarning(string message)
     {
         if (_lock) return;
-        var content = $"[{LogLevel.Warning}][{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: {message}";
+        var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Warn}]: {message}";
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(content);
         WriteToFile(content);
     }
@@ -91,7 +93,8 @@ public class Logger
     public static void LogError(string message)
     {
         if (_lock) return;
-        var content = $"[{LogLevel.Error}][{DateTime.Now:yyyy-MM-dd HH:mm:ss}]: {message}";
+        var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Error}]: {message}";
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(content);
         WriteToFile(content);
     }

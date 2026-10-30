@@ -8,7 +8,7 @@ public class Logger
         Warn,
         Error
     }
-    private static readonly string LogDirPath = Path.Combine(AppInfo.AppPath, "logs");
+    private static readonly string LogDirPath = Path.Combine(AppInfo.AppPath, "ActiveMonitor", "logs");
     private static bool _lock = true; // define limit locker
     private static string _logFilePath = "";
 

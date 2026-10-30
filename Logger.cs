@@ -34,7 +34,7 @@ public class Logger
                 var count = 1;
                 while (true)
                 {
-                    var logFileName = $"log_{DateTime.Now:yyyyMMdd}_{count}.txt";
+                    var logFileName = $"log_{DateTime.Now:yyyyMMdd}_{count}.log";
                     _logFilePath = Path.Combine(LogDirPath, logFileName);
                     if (!File.Exists(_logFilePath))
                     {

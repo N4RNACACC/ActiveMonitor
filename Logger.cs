@@ -51,11 +51,12 @@ public class Logger
                 _lock = true;
                 return;
             }
-
             _lock = false; // unlock limit locker
         }
 
-        Console.WriteLine("Logger initialized.");
+        Console.WriteLine(_lock
+            ? "Logger is locked. Logging will not be available."
+            : $"Logger initialized. Log file: {_logFilePath}");
     }
 
     private static void WriteToFile(string content)
@@ -73,8 +74,13 @@ public class Logger
 
     public static void LogInfo(string message)
     {
-        if (_lock) return;
         var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Info}]: {message}";
+        if (_lock)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(content);
+            return;
+        }
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine(content);
         WriteToFile(content);
@@ -83,8 +89,13 @@ public class Logger
 
     public static void LogWarning(string message)
     {
-        if (_lock) return;
         var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Warn}]: {message}";
+        if (_lock)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(content);
+            return;
+        }
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(content);
         WriteToFile(content);
@@ -92,8 +103,13 @@ public class Logger
 
     public static void LogError(string message)
     {
-        if (_lock) return;
         var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Error}]: {message}";
+        if (_lock)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(content);
+            return;
+        }
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(content);
         WriteToFile(content);

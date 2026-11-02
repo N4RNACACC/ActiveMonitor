@@ -20,27 +20,36 @@ if(!File.Exists(targetProcessPath))
 }
 else
 {
-    targetProcess.Start();
-   Logger.LogInfo($"Monitoring target process: {targetProcessPath}");
-   while (true)
-   {
-        if(targetProcess.HasExited)
-        {
-            Logger.LogWarning("Target process not active. Restarting...");
-            try
-            {
-                targetProcess.Start();
-                Logger.LogInfo("Target process restarted successfully.");
-                Logger.LogInfo($"Monitoring target process PID: {targetProcess.Id}");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Failed to restart target process: {ex.Message}");
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey();
-                break;
-            }
-        }
-        targetProcess.WaitForExit(1000); // Wait for 1 second before checking again
-   }
-}
+    Logger.LogInfo($"Monitoring target process: {targetProcessPath}");
+    if(Process.GetProcessesByName("Autovisor").Length > 0)
+    {
+        Logger.LogInfo("Target process is already running.");
+        Logger.LogInfo($"Monitoring target process PID: {Process.GetProcessesByName("Autovisor")[0].Id}");
+    }
+    else
+    {
+        Logger.LogWarning("Target process is not running. Starting...");
+        targetProcess.Start();
+    }
+    while (true)
+    {
+         if(targetProcess.HasExited)
+         {
+             Logger.LogWarning("Target process not active. Restarting...");
+             try
+             {
+                 targetProcess.Start();
+                 Logger.LogInfo("Target process restarted successfully.");
+                 Logger.LogInfo($"Monitoring target process PID: {targetProcess.Id}");
+             }
+             catch (Exception ex)
+             {
+                 Logger.LogError($"Failed to restart target process: {ex.Message}");
+                 Console.WriteLine("Press any key to exit...");
+                 Console.ReadKey();
+                 break;
+             }
+         }
+         targetProcess.WaitForExit();
+    }
+}   

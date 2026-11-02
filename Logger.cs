@@ -8,13 +8,14 @@ public class Logger
         Warn,
         Error
     }
-    private static readonly string LogDirPath = Path.Combine(AppInfo.AppPath, "ActiveMonitor", "logs");
-    private static bool _lock = true; // define limit locker
+    private static readonly string LogDirPath = Path.Combine(AppInfo.AppDataPath, "logs");
+    private static bool _writeLock = true; // define write locker
     private static string _logFilePath = "";
-
+    
     public static void Initialize()
     {
         Console.WriteLine("Initializing Logger...");
+        // 检查文件目录
         if (!Directory.Exists(LogDirPath))
         {
             try
@@ -25,36 +26,35 @@ public class Logger
             {
                 Console.WriteLine($"Failed to create log directory: {ex.Message}");
                 Console.WriteLine("Logger will not be initialized.");
-                _lock = true;
+                _writeLock = true;
                 return;
             }
-
-            try
-            {
-                var count = 1;
-                while (true)
-                {
-                    var logFileName = $"log_{DateTime.Now:yyyyMMdd}_{count}.log";
-                    _logFilePath = Path.Combine(LogDirPath, logFileName);
-                    if (!File.Exists(_logFilePath))
-                    {
-                        File.Create(_logFilePath).Dispose();
-                        break;
-                    }
-                    count++;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to create log file: {ex.Message}");
-                Console.WriteLine("Logger will not be initialized.");
-                _lock = true;
-                return;
-            }
-            _lock = false; // unlock limit locker
         }
-
-        Console.WriteLine(_lock
+        // 创建日志文件
+        try
+        {
+            var count = 1;
+            while (true)
+            {
+                var logFileName = $"log_{DateTime.Now:yyyyMMdd}_{count}.log";
+                _logFilePath = Path.Combine(LogDirPath, logFileName);
+                if (!File.Exists(_logFilePath))
+                {
+                    File.Create(_logFilePath).Dispose();
+                    _writeLock = false; // unlock write locker
+                    break;
+                }
+                count++;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to create log file: {ex.Message}");
+            Console.WriteLine("Logger will not be fully initialized.");
+            _writeLock = true;
+            return;
+        }
+        Console.WriteLine(_writeLock
             ? "Logger is locked. Logging will not be available."
             : $"Logger initialized. Log file: {_logFilePath}");
     }
@@ -63,7 +63,7 @@ public class Logger
     {
         try
         {
-            if (_lock) return;
+            if (_writeLock) return;
             File.AppendAllText(_logFilePath, content + Environment.NewLine);
         }
         catch (Exception ex)
@@ -75,14 +75,12 @@ public class Logger
     public static void LogInfo(string message)
     {
         var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Info}]: {message}";
-        if (_lock)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(content);
-            return;
-        }
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine(content);
+        if (_writeLock)
+        {
+            return;
+        }
         WriteToFile(content);
     }
 
@@ -90,28 +88,24 @@ public class Logger
     public static void LogWarning(string message)
     {
         var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Warn}]: {message}";
-        if (_lock)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(content);
-            return;
-        }
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(content);
+        if (_writeLock)
+        {
+            return;
+        }
         WriteToFile(content);
     }
 
     public static void LogError(string message)
     {
         var content = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{LogLevel.Error}]: {message}";
-        if (_lock)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(content);
-            return;
-        }
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(content);
+        if (_writeLock)
+        {
+            return;
+        }
         WriteToFile(content);
     }
 

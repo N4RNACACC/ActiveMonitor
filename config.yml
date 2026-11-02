@@ -1,0 +1,9 @@
+monitor:
+  target:
+    process: # process name
+    path: # process path
+  retry:
+    delay: 0 # seconds (default: 0)
+  
+logger:
+  enabled: false # enable log writing (default: false)

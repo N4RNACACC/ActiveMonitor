@@ -8,19 +8,18 @@ public class Logger
         Warn,
         Error
     }
-    private static readonly string LogDirPath = Path.Combine(AppInfo.AppDataPath, "logs");
     private static bool _writeLock = true; // define write locker
-    private static string _logFilePath = "";
+    private static string _logFilePath = string.Empty;
     
     public static void Initialize()
     {
         Console.WriteLine("Initializing Logger...");
         // 检查文件目录
-        if (!Directory.Exists(LogDirPath))
+        if (!Directory.Exists(AppInfo.LogPath))
         {
             try
             {
-                Directory.CreateDirectory(LogDirPath);
+                Directory.CreateDirectory(AppInfo.LogPath);
             }
             catch (Exception ex)
             {
@@ -37,7 +36,7 @@ public class Logger
             while (true)
             {
                 var logFileName = $"log_{DateTime.Now:yyyyMMdd}_{count}.log";
-                _logFilePath = Path.Combine(LogDirPath, logFileName);
+                _logFilePath = Path.Combine(AppInfo.LogPath, logFileName);
                 if (!File.Exists(_logFilePath))
                 {
                     File.Create(_logFilePath).Dispose();

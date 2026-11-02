@@ -16,6 +16,9 @@
   <ItemGroup>
     <PackageReference Include="Vecc.YamlDotNet.Analyzers.StaticGenerator" Version="18.1.0" />
     <PackageReference Include="YamlDotNet" Version="18.1.0" />
+    <EmbeddedResource Include="config.yml">
+          <LogicalName>ActiveMonitor.Config.config.yml</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

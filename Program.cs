@@ -11,7 +11,7 @@ Logger.Initialize();
 Logger.LogInfo("ActiveMonitor is starting...");
 
 // 初始化配置
-var ymlPath = Path.Combine(AppInfo.ConfigPath, "config.yaml");
+var ymlPath = Path.Combine(AppInfo.ConfigPath, "config.yml");
 if(!File.Exists(ymlPath))
 {
     // 创建默认配置文件
@@ -66,7 +66,7 @@ if(config.Monitor.Target.Process == null || config.Monitor.Target.Path == null)
 
 // 构建目标进程配置
 var targetProcess = new Process();
-var targetProcessPath = Path.Combine(AppInfo.AppPath, config.Monitor.Target.Path);
+var targetProcessPath = config.Monitor.Target.Path;
 targetProcess.StartInfo.FileName = targetProcessPath;
 targetProcess.StartInfo.UseShellExecute = true;
 
@@ -85,7 +85,7 @@ else
     if(Process.GetProcessesByName(config.Monitor.Target.Process).Length > 0)
     {
         Logger.LogInfo("Target process is already running.");
-        Logger.LogInfo($"Monitoring target process PID: {Process.GetProcessesByName(config.Monitor.Target.Process)[0].Id}");
+        Logger.LogInfo($"Monitoring target process [PID: {Process.GetProcessesByName(config.Monitor.Target.Process)[0].Id}]");
     }
     else
     {
@@ -102,7 +102,7 @@ else
              {
                  targetProcess.Start();
                  Logger.LogInfo("Target process restarted successfully.");
-                 Logger.LogInfo($"Monitoring target process PID: {targetProcess.Id}");
+                 Logger.LogInfo($"Monitoring target process [PID: {targetProcess.Id}]");
              }
              catch (Exception ex)
              {
